@@ -1,8 +1,10 @@
 
+import { Routes } from './routes'
+
 function App() {
   return (
-    <h1>Ajsdjsd</h1>
-  );
+    <Routes />
+  )
 }
 
 export default App;
