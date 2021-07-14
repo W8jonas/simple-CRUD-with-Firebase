@@ -1,9 +1,10 @@
 import React, { useEffect, useState } from 'react'
+import { database, auth } from '../../services/firebase'
 import './styles.css'
 
 export function Product(props) {
 
-    const [formData, setFormData] = useState([{id: Math.random()}])
+    const [formData, setFormData] = useState([{id: props.id}])
 
     const [attribute, setAttribute] = useState('')
     const [value, setValue] = useState('')
@@ -40,6 +41,22 @@ export function Product(props) {
         setFormData((prev) => [...prev, inputState]);
     }
 
+    function handleSaveData(event) {
+        event.preventDefault()
+        const user = auth.currentUser;
+        const { uid } = user
+
+        const productsDataObject = formData.reduce((acc, obj) => ({...acc, ...obj}), {})
+
+        database.collection("userProducts").doc(uid).collection("products").doc(props.id).set(productsDataObject)
+            .then((docRef) => {
+                console.log("Document written with ID: ", docRef);
+            })
+            .catch((error) => {
+                console.error("Error adding document: ", error);
+            })
+    }
+
     return (
         <div className="Container">
             <form>
@@ -69,7 +86,7 @@ export function Product(props) {
 
                     <button
                         className="button" 
-                        onClick={handleAddData}
+                        onClick={handleSaveData}
                     >
                         Salvar
                     </button>
