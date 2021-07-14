@@ -42,30 +42,38 @@ export function Product(props) {
 
     return (
         <div className="Container">
-            <h3>Produto: {props.id}</h3>
             <form>
-                {formData.map((item, index) => (
-                    <div 
-                        className="rowContainer" 
-                        key={`${index}`}
-                    >
-                        <input
-                            type="text"
-                            name="Attribute"
-                            placeholder="Atributo"
-                            value={item.Attribute}
-                            onChange={(event) => handleChangeData(index, event, 0)}
-                        />
+                <h3>Produto: {props.id}</h3>
+                <div className="rowContainer">
+                    <div>
+                        {formData.map((item, index) => (
+                            <div key={`${index}`} className="rowContent">
+                                <input
+                                    type="text"
+                                    name="Attribute"
+                                    placeholder="Atributo"
+                                    value={item.Attribute}
+                                    onChange={(event) => handleChangeData(index, event, 0)}
+                                />
 
-                        <input
-                            type="text"
-                            name="Value"
-                            placeholder="Value"
-                            value={item.Value}
-                            onChange={(event) => handleChangeData(index, event, 1)}
-                        />
+                                <input
+                                    type="text"
+                                    name="Value"
+                                    placeholder="Value"
+                                    value={item.Value}
+                                    onChange={(event) => handleChangeData(index, event, 1)}
+                                />
+                            </div>
+                        ))}
                     </div>
-                ))}
+
+                    <button
+                        className="button" 
+                        onClick={handleAddData}
+                    >
+                        Salvar
+                    </button>
+                </div>
 
                 <button
                     className="button" 
