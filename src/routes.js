@@ -6,7 +6,7 @@ import { Admin } from './pages/Admin'
 import { Auth } from './pages/Auth'
 import {Home} from './pages/Home'
 
-const isAuthenticated = false
+const isAuthenticated = true
 
 function PrivateRoute({ component: Component, ...rest }) {
     return (

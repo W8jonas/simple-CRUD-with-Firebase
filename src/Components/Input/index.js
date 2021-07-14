@@ -6,7 +6,7 @@ export function Input({name, label, ...rest}) {
     return (
         <div className="input-block">
             <label htmlFor={name}>{label}</label>
-            <input id={name} type="text" {...rest} />
+            <input id={name} {...rest}/>
         </div>
     )
 }
