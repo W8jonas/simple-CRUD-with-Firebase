@@ -2,7 +2,7 @@ import React, { useState } from 'react'
 import { useHistory } from 'react-router-dom'
 import { Input } from '../../Components/Input'
 import './styles.css' 
-
+import { auth } from '../../services/firebase'
 
 export function Auth() {
     const history = useHistory()
@@ -14,8 +14,18 @@ export function Auth() {
 
     function handleSubmit(event) {
         event.preventDefault()
-        console.log('log: ', {name, email, password, confirmPassword})
-        history.push('/admin')
+
+        if (!email) return alert('É necessário e-mail válido')
+        if (password !== confirmPassword) return alert('Senhas diferentes')
+
+        auth.createUserWithEmailAndPassword(email, password)
+            .then((response) => {
+                const user = response.user
+                history.push('/admin')
+            })
+            .catch((error) => {
+                console.log('error: ', error)
+            })
     }
 
     return (
@@ -62,7 +72,7 @@ export function Auth() {
                     secret={true}
                 />
 
-                <button type="submit">Cadastrar grátis</button>
+                <button type="submit">Crie sua conta agora</button>
 
             </form>
 
