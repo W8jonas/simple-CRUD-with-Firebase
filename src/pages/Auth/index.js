@@ -28,6 +28,21 @@ export function Auth() {
             })
     }
 
+    function handleLogin() {
+        if (!email) return alert('É necessário e-mail válido')
+        if (password !== confirmPassword) return alert('Senhas diferentes')
+
+        auth.signInWithEmailAndPassword(email, password)
+            .then((response) => {
+                const user = response.user
+                history.push('/admin')
+            })
+            .catch((error) => {
+                console.log('error: ', error)
+            })
+    }
+
+
     return (
         <div id="container">
             <h1>Pagina Autenticação</h1>
@@ -69,10 +84,11 @@ export function Auth() {
                     placeholder="Senha"
                     value={confirmPassword}
                     onChange={(e)=>setConfirmPassword(e.target.value)}
-                    secret={true}
                 />
 
                 <button type="submit">Crie sua conta agora</button>
+                
+                <button type="submit" onClick={handleLogin}>Ou entre com sua conta agora</button>
 
             </form>
 
