@@ -32,7 +32,7 @@ export function Home() {
                     response.forEach((doc) => {
                         arraySnapshot.push({id: doc.id, ...doc.data()})
                     })
-                    
+                    productsSeparatedByUsers.push(arraySnapshot)
             })
 
             await Promise.all(promises)
