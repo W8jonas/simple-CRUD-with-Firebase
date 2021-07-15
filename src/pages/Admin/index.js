@@ -26,7 +26,6 @@ export function Admin() {
 
         const { uid } = user
 
-        console.log(`userProducts/${uid}/products/`)
         database.collection("userProducts")
             .doc(uid)
             .collection("products")
