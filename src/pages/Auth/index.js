@@ -2,7 +2,7 @@ import React, { useState } from 'react'
 import { useHistory } from 'react-router-dom'
 import { Input } from '../../Components/Input'
 import './styles.css' 
-import { auth } from '../../services/firebase'
+import { auth, database } from '../../services/firebase'
 
 export function Auth() {
     const history = useHistory()
@@ -21,6 +21,8 @@ export function Auth() {
         auth.createUserWithEmailAndPassword(email, password)
             .then((response) => {
                 const user = response.user
+                database.collection("users").add({uid: user.uid, name})
+
                 history.push('/admin')
             })
             .catch((error) => {
