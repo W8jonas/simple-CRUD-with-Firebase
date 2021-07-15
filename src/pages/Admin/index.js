@@ -1,4 +1,4 @@
-import React, { useCallback, useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import { Product } from '../../Components/Product'
 import { auth, database } from '../../services/firebase';
 
@@ -20,13 +20,34 @@ export function Admin() {
             })
     }
 
+    useEffect(() => {
+        const user = auth.currentUser;
+        if (!user) return alert('Você precisa estar logado') 
+
+        const { uid } = user
+
+        console.log(`userProducts/${uid}/products/`)
+        database.collection("userProducts")
+            .doc(uid)
+            .collection("products")
+            .get()
+            .then((querySnapshot) => {
+                const arraySnapshot = []
+                querySnapshot.forEach((doc) => {
+                    console.log(doc.id, " => ", doc.data());
+                    arraySnapshot.push({id: doc.id, ...doc.data()})
+                })
+                setProducts(arraySnapshot)
+            })
+    }, [])
+
     return (
         <div>
             <h1>Painel de admin</h1>
             
             <h4>Produtos atuais</h4>
             
-            {products.map((product, index) => (
+            {products.map((product) => (
                 <Product 
                     key={product.id}
                     id={product.id}
