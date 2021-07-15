@@ -33,8 +33,6 @@ export function Home() {
                         arraySnapshot.push({id: doc.id, ...doc.data()})
                     })
                     
-                    console.log('arraySnapshot:', arraySnapshot)
-                    productsSeparatedByUsers.push(arraySnapshot)
             })
 
             await Promise.all(promises)
@@ -44,8 +42,6 @@ export function Home() {
 
         const productsSeparatedByUsers = []
         getProducts().then(() => setProducts(productsSeparatedByUsers))
-        console.log('productsSeparatedByUsers:', productsSeparatedByUsers)
-        
     }, [users])
 
     return (
