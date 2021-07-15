@@ -3,7 +3,7 @@ import { Product } from '../../Components/Product'
 import { auth, database } from '../../services/firebase';
 
 export function Admin() {
-    const [products, setProducts] = useState([{id: Math.round(Math.random() * 100000).toString()}])
+    const [products, setProducts] = useState([])
 
     function handleAddData(event) {
         event.preventDefault()
