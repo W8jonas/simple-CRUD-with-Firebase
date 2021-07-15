@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react'
 import { ProductList } from '../../Components/ProductList'
 import { database } from '../../services/firebase';
+import { Link } from 'react-router-dom'
 
 export function Home() {
     const [users, setUsers] = useState([])
@@ -66,12 +67,9 @@ export function Home() {
                 </div>
             ))}
 
-            <button
-                className="button" 
-                // onClick={handleAddData}
-            >
-                Para adicionar um novo produto cadastre-se
-            </button>
+            <p>
+                Para adicionar um novo produto <Link to='/auth'>cadastre-se</Link>
+            </p>
         </div>
     )
 } 
