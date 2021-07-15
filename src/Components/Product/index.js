@@ -2,43 +2,30 @@ import React, { useEffect, useState } from 'react'
 import { database, auth } from '../../services/firebase'
 import './styles.css'
 
-export function Product(props) {
+export function Product({id: productId}) {
 
-    const [formData, setFormData] = useState([{id: props.id}])
-
-    const [attribute, setAttribute] = useState('')
-    const [value, setValue] = useState('')
+    const [formData, setFormData] = useState([{id: productId}])
 
     function handleChangeData(index, event, type) {
         event.preventDefault();
+        const updatedFormData = formData.map((data, _index) => {
+            if (index === _index) {
+                let objArray = Object.entries(data)[0]
+                objArray[type] = event.target.value
 
-        if (index === formData.length - 1) {
-            if(type) {
-                setValue(event.target.value)
+                return {[objArray[0]] : objArray[1]}
             } else {
-                setAttribute(event.target.value)
+                return data
             }
-        } else {
-            const updatedFormData = formData.map((data, _index) => {
-                if (index === _index - 1) {
-                    let objArray = Object.entries(data)[0]
-                    objArray[type] = event.target.value
+        }) 
+        setFormData(updatedFormData)
 
-                    return {[objArray[0]] : objArray[1]}
-                } else {
-                    return data
-                }
-            }) 
-            setFormData(updatedFormData)
-        }
     }
 
     function handleAddData(event) {
         event.preventDefault()
-        const inputState = {
-          [attribute]: value
-        }
-        setFormData((prev) => [...prev, inputState]);
+
+        setFormData((prev) => [...prev, {'': ''}]);
     }
 
     function handleSaveData(event) {
@@ -48,40 +35,64 @@ export function Product(props) {
 
         const productsDataObject = formData.reduce((acc, obj) => ({...acc, ...obj}), {})
 
-        database.collection("userProducts").doc(uid).collection("products").doc(props.id).set(productsDataObject)
+        database.collection("userProducts").doc(uid).collection("products").doc(productId).set(productsDataObject)
             .then((docRef) => {
-                console.log("Document written with ID: ", docRef);
+                console.log("Deu bom", docRef);
             })
             .catch((error) => {
                 console.error("Error adding document: ", error);
             })
     }
 
+    useEffect(() => {
+        const user = auth.currentUser;
+        if (!user) return alert('Você precisa estar logado') 
+
+        const { uid } = user
+
+        database.collection("userProducts")
+            .doc(uid)
+            .collection("products")
+            .doc(productId)
+            .get()
+            .then((doc) => {
+                if (doc.exists) {
+                    setFormData(Object.entries(doc.data()).map((subArray) => ({ [subArray[0]]:subArray[1] })))
+                } else {
+                    console.log("Não foi encontrado nada.");
+                }
+            })
+    }, [productId])
+
     return (
         <div className="Container">
             <form>
-                <h3>Produto: {props.id}</h3>
+                <h3>Id do produto: {productId}</h3>
                 <div className="rowContainer">
                     <div>
-                        {formData.map((item, index) => (
-                            <div key={`${index}`} className="rowContent">
-                                <input
-                                    type="text"
-                                    name="Attribute"
-                                    placeholder="Atributo"
-                                    value={item.Attribute}
-                                    onChange={(event) => handleChangeData(index, event, 0)}
-                                />
+                        {formData.map((item, index) => {
+                            return Object.entries(item)[0][0] !== "id" 
+                            ? (
+                                <div key={`${index}`} className="rowContent">
+                                    <input
+                                        type="text"
+                                        name="Attribute"
+                                        placeholder="Atributo"
+                                        value={Object.entries(item)[0][0]}
+                                        onChange={(event) => handleChangeData(index, event, 0)}
+                                    />
 
-                                <input
-                                    type="text"
-                                    name="Value"
-                                    placeholder="Value"
-                                    value={item.Value}
-                                    onChange={(event) => handleChangeData(index, event, 1)}
-                                />
-                            </div>
-                        ))}
+                                    <input
+                                        type="text"
+                                        name="Value"
+                                        placeholder="Value"
+                                        value={Object.entries(item)[0][1]}
+                                        onChange={(event) => handleChangeData(index, event, 1)}
+                                    />
+                                </div>
+                            )
+                            : null
+                    })}
                     </div>
 
                     <button
