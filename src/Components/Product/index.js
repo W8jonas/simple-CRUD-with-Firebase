@@ -37,7 +37,6 @@ export function Product({id: productId}) {
 
         database.collection("userProducts").doc(uid).collection("products").doc(productId).set(productsDataObject)
             .then((docRef) => {
-                console.log("Deu bom", docRef);
             })
             .catch((error) => {
                 console.error("Error adding document: ", error);

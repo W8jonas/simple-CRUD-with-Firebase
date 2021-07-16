@@ -12,7 +12,6 @@ export function Admin() {
 
         database.collection("userProducts").doc(uid).collection("products").add({})
             .then((docRef) => {
-                console.log(docRef.id)
                 setProducts((prev) => [...prev, {id: docRef.id}]);
             })
             .catch((error) => {
@@ -33,7 +32,6 @@ export function Admin() {
             .then((querySnapshot) => {
                 const arraySnapshot = []
                 querySnapshot.forEach((doc) => {
-                    console.log(doc.id, " => ", doc.data());
                     arraySnapshot.push({id: doc.id, ...doc.data()})
                 })
                 setProducts(arraySnapshot)

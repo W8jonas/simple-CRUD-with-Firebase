@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import React, { useEffect, useState } from 'react'
 
 import { BrowserRouter, Route, Switch, Redirect } from 'react-router-dom'
 
@@ -27,13 +27,20 @@ function PrivateRoute({ component: Component, authState, ...rest }) {
 export function Routes() {
     const [authUser, setAuthUser] = useState(false)
 
-    auth.onAuthStateChanged((user) => {
-        if (user) {
-            setAuthUser(true)
-        } else {
-            setAuthUser(false)
+    useEffect(() => {
+        const unsubscribe = auth.onAuthStateChanged((user) => {
+            if (user) {
+                setAuthUser(true)
+            } else {
+                setAuthUser(false)
+            }
+        })
+
+        return () => {
+            unsubscribe()
         }
-    })
+
+    }, [authUser])
 
     return (
         <BrowserRouter>
