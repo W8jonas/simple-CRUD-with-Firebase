@@ -6,6 +6,14 @@ Este projeto foi desenvolvido utilizando ReactJs + Firebase para realizar um CRU
 
 Este projeto está em produção no Heroku, você pode acessa-lô [clicando aqui.](https://frontend-crud-firebase.herokuapp.com/)
 
+## Possibilidades
+Com esse CRUD é possível:
+ - Se registrar para adicionar produtos na sessão de administrador.
+ - Adicionar produtos indefinidamente.
+ - Personalizar cada produto com uma quantidade dinâmica de propriedades.
+ - Editar cada propriedade dos produtos já adicionados ao banco de dados.
+ - Remover produtos
+
 ## Fotos do projeto:
 
 ![](prints/home.png)  |  ![](prints/auth.png) |  ![](prints/admin.png)  | 
@@ -29,6 +37,8 @@ Esse projeto foi desenvolvido utilizando como principal linguagem o **Javascript
   
  - Javascript
  - Firebase auth
+ - Validação com Yup
+ - Criação de formulário utilizando Unform
  - React Router Dom
  - HTML
  - CSS
