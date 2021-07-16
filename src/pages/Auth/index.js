@@ -1,19 +1,17 @@
-import React, { useState } from 'react'
+import React, { useRef, useState } from 'react'
 import { useHistory } from 'react-router-dom'
 import { Input } from '../../Components/Input'
-import './styles.css' 
 import { auth, database, firebase } from '../../services/firebase'
+import { Form } from '@unform/web'
+
+import './styles.css' 
 
 export function Auth() {
     const history = useHistory()
+    const formRef = useRef(null);
 
-    const [name, setName] = useState('')
-    const [email, setEmail] = useState('')
-    const [password, setPassword] = useState('')
-    const [confirmPassword, setConfirmPassword] = useState('')
-
-    function handleSubmit(event) {
-        event.preventDefault()
+    function handleSubmit(data) {
+        const {name, email, password, confirmPassword} = data
 
         if (!email) return alert('É necessário e-mail válido')
         if (password !== confirmPassword) return alert('Senhas diferentes')
@@ -30,7 +28,12 @@ export function Auth() {
             })
     }
 
-    function handleLogin() {
+    function handleLogin(event) {
+        event.preventDefault()
+
+        const data = formRef.current.getData();
+        const {email, password, confirmPassword} = data
+
         if (!email) return alert('É necessário e-mail válido')
         if (password !== confirmPassword) return alert('Senhas diferentes')
 
@@ -64,14 +67,12 @@ export function Auth() {
 
             <h4>Você precisa estar autenticado para continuar</h4>
 
-            <form onSubmit={handleSubmit}>
+            <Form ref={formRef} className="form-auth" onSubmit={handleSubmit}>
                 <Input
                     name="name"
                     label="Nome completo"
                     type="text"
                     placeholder="Nome de usuário"
-                    value={name}
-                    onChange={(e)=>setName(e.target.value)} 
                 />
 
                 <Input
@@ -79,8 +80,6 @@ export function Auth() {
                     label="E-mail"
                     type="text"
                     placeholder="Endereço de e-mail"
-                    value={email}
-                    onChange={(e)=>setEmail(e.target.value)} 
                 />
 
                 <Input
@@ -88,8 +87,6 @@ export function Auth() {
                     label="Senha"
                     type="password"
                     placeholder="Senha"
-                    value={password}
-                    onChange={(e)=>setPassword(e.target.value)} 
                 />
 
                 <Input
@@ -97,26 +94,21 @@ export function Auth() {
                     label="Confirme sua senha"
                     type="password"
                     placeholder="Senha"
-                    value={confirmPassword}
-                    onChange={(e)=>setConfirmPassword(e.target.value)}
                 />
 
                 <button className="buttonAuth" type="submit">Crie sua conta agora</button>
                 
-                <button className="buttonAuth" type="submit" onClick={handleLogin}>Entrar com sua conta agora</button>
+                <button className="buttonAuth" onClick={handleLogin}>Entrar com sua conta agora</button>
 
-                <button className="buttonAuth" onClick={handleSignInWithGoogle}>Ou entre com sua conta do Google</button>
+            </Form>
 
                 <br />
-
                 <div className="google-btn" onClick={handleSignInWithGoogle}>
                     <div className="google-icon-wrapper">
                         <img className="google-icon" src="https://upload.wikimedia.org/wikipedia/commons/5/53/Google_%22G%22_Logo.svg"/>
                     </div>
                     <p className="btn-text"><b>Entre com google</b></p>
                 </div>
-
-            </form>
 
         </div>
     )
