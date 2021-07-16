@@ -19,6 +19,7 @@ Esse projeto foi desenvolvido utilizando como principal linguagem o **Javascript
   <summary>Backend</summary>
 
  - Firebase auth
+ - Firebase Google SignIn auth
  - Firebase Firestore
 
 </details>
