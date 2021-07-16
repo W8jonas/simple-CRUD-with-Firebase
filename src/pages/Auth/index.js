@@ -3,48 +3,98 @@ import { useHistory } from 'react-router-dom'
 import { Input } from '../../Components/Input'
 import { auth, database, firebase } from '../../services/firebase'
 import { Form } from '@unform/web'
+import * as Yup from 'yup'
 
 import './styles.css' 
 
 export function Auth() {
     const history = useHistory()
-    const formRef = useRef(null);
+    const formRef = useRef(null)
 
-    function handleSubmit(data) {
-        const {name, email, password, confirmPassword} = data
+    async function handleSubmit(data) {
+        const {name, email, password} = data
 
-        if (!email) return alert('É necessário e-mail válido')
-        if (password !== confirmPassword) return alert('Senhas diferentes')
-
-        auth.createUserWithEmailAndPassword(email, password)
-            .then((response) => {
-                const user = response.user
-                database.collection("users").add({uid: user.uid, name})
-
-                history.push('/admin')
+        try {
+            formRef.current.setErrors({})
+            const schema = Yup.object().shape({
+                name: Yup.string()
+                    .required(),
+                email: Yup.string()
+                    .email()
+                    .required(),
+                password: Yup.string()
+                    .min(6)
+                    .required(),
+                confirmPassword: Yup.mixed().oneOf([password], 'As senhas estão diferentes')
             })
-            .catch((error) => {
-                console.log('error: ', error)
+
+            await schema.validate(data, {
+                abortEarly: false,
             })
+
+            auth.createUserWithEmailAndPassword(email, password)
+                .then((response) => {
+                    const user = response.user
+                    database.collection("users").add({uid: user.uid, name})
+
+                    history.push('/admin')
+                })
+                .catch((error) => {
+                    console.log('error: ', error)
+                })
+
+            } catch (err) {
+                const validationErrors = {}
+                if (err instanceof Yup.ValidationError) {
+                    err.inner.forEach(error => {
+                        validationErrors[error.path] = error.message
+                    })
+                    formRef.current.setErrors(validationErrors)
+                }
+            }
+
     }
 
-    function handleLogin(event) {
+    async function handleLogin(event) {
         event.preventDefault()
 
-        const data = formRef.current.getData();
-        const {email, password, confirmPassword} = data
+        const data = formRef.current.getData()
+        const {email, password} = data
 
-        if (!email) return alert('É necessário e-mail válido')
-        if (password !== confirmPassword) return alert('Senhas diferentes')
+        try {
+            formRef.current.setErrors({})
+            const schema = Yup.object().shape({
+                email: Yup.string()
+                    .email()
+                    .required(),
+                password: Yup.string()
+                    .min(6)
+                    .required(),
+            })
 
-        auth.signInWithEmailAndPassword(email, password)
-            .then((response) => {
-                history.push('/admin')
+            await schema.validate(data, {
+                abortEarly: false,
             })
-            .catch((error) => {
-                console.log('error: ', error)
-            })
+
+            auth.signInWithEmailAndPassword(email, password)
+                .then((response) => {
+                    history.push('/admin')
+                })
+                .catch((error) => {
+                    console.log('error: ', error)
+                })
+
+            } catch (err) {
+                const validationErrors = {}
+                if (err instanceof Yup.ValidationError) {
+                    err.inner.forEach(error => {
+                        validationErrors[error.path] = error.message
+                    })
+                    formRef.current.setErrors(validationErrors)
+                }
+            }
     }
+
 
     function handleSignInWithGoogle() {
         const provider = new firebase.auth.GoogleAuthProvider()
