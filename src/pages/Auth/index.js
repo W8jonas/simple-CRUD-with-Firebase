@@ -2,7 +2,7 @@ import React, { useState } from 'react'
 import { useHistory } from 'react-router-dom'
 import { Input } from '../../Components/Input'
 import './styles.css' 
-import { auth, database } from '../../services/firebase'
+import { auth, database, firebase } from '../../services/firebase'
 
 export function Auth() {
     const history = useHistory()
@@ -36,12 +36,25 @@ export function Auth() {
 
         auth.signInWithEmailAndPassword(email, password)
             .then((response) => {
-                const user = response.user
                 history.push('/admin')
             })
             .catch((error) => {
                 console.log('error: ', error)
             })
+    }
+
+    function handleSignInWithGoogle() {
+        const provider = new firebase.auth.GoogleAuthProvider()
+    
+        auth.signInWithPopup(provider).then(result => {
+            if (result.user) {
+                const {displayName, uid} = result.user
+
+                database.collection("users").add({uid: uid, name: displayName})
+
+                history.push('/admin')
+            }
+        })
     }
 
 
@@ -88,9 +101,20 @@ export function Auth() {
                     onChange={(e)=>setConfirmPassword(e.target.value)}
                 />
 
-                <button type="submit">Crie sua conta agora</button>
+                <button className="buttonAuth" type="submit">Crie sua conta agora</button>
                 
-                <button type="submit" onClick={handleLogin}>Ou entre com sua conta agora</button>
+                <button className="buttonAuth" type="submit" onClick={handleLogin}>Entrar com sua conta agora</button>
+
+                <button className="buttonAuth" onClick={handleSignInWithGoogle}>Ou entre com sua conta do Google</button>
+
+                <br />
+
+                <div className="google-btn" onClick={handleSignInWithGoogle}>
+                    <div className="google-icon-wrapper">
+                        <img className="google-icon" src="https://upload.wikimedia.org/wikipedia/commons/5/53/Google_%22G%22_Logo.svg"/>
+                    </div>
+                    <p className="btn-text"><b>Entre com google</b></p>
+                </div>
 
             </form>
 
